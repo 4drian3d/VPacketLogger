@@ -2,19 +2,26 @@ plugins {
     java
     alias(libs.plugins.runvelocity)
     alias(libs.plugins.blossom)
+    alias(libs.plugins.shadow)
 }
 
 repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://maven.elytrium.net/repo/")
 }
 
 dependencies {
-    compileOnly(libs.velocity)
-    annotationProcessor(libs.velocity)
+    compileOnly(libs.velocity.api)
+    compileOnly(libs.velocity.proxy)
+    annotationProcessor(libs.velocity.api)
     compileOnly(libs.vpacketevents)
+    implementation(libs.hexlogger)
 }
 
 tasks {
+    build {
+        dependsOn(shadowJar)
+    }
     compileJava {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(17)
@@ -26,10 +33,14 @@ tasks {
     runVelocity {
         velocityVersion(libs.versions.velocity.get())
     }
+    shadowJar {
+        relocate("io.github._4drian3d.velocityhexlogger", "io.github._4drian3d.vpacketlogger.velocityhexlogger")
+        relocate("net.kyori.adventure.text.logger.slf4j", "io.github._4drian3d.vpacketlogger.component.logger")
+    }
 }
 
 blossom {
-    replaceTokenIn("src/main/java/io/github/_4drian3d/Constants.java")
+    replaceTokenIn("src/main/java/io/github/_4drian3d/vpacketlogger/Constants.java")
     replaceToken("{version}", project.version)
 }
 

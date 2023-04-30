@@ -16,8 +16,10 @@ bstats = "3.0.0"
 [libraries]
 
 # Compile Only Dependencies
-velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
+velocity-api = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
+velocity-proxy = { group = "com.velocitypowered", name = "velocity-proxy", version.ref = "velocity" }
 vpacketevents = "io.github.4drian3d:vpacketevents-api:1.1.0"
+hexlogger = "io.github.4drian3d:velocityhexlogger:1.0.2"
 
 bstats = { module = "org.bstats:bstats-velocity", version.ref = "bstats" }
 

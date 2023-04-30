@@ -9,17 +9,29 @@ import io.github._4drian3d.vpacketlogger.configuration.Configuration;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("UnstableApiUsage")
-public class PluginModule extends AbstractModule {
+public final class ConfigurationModule extends AbstractModule {
 
     @Singleton
     @Provides
     private Configuration configuration(final @DataDirectory Path dataDirectory) throws Throwable {
+        if (Files.notExists(dataDirectory)) {
+            Files.createDirectory(dataDirectory);
+        }
+        final Path configPath = dataDirectory.resolve("config.conf");
+        if (Files.notExists(configPath)) {
+            try (InputStream is = Configuration.class.getResourceAsStream("/config.conf")) {
+                Files.copy(Objects.requireNonNull(is), configPath);
+            }
+        }
         final HoconConfigurationLoader loader = HoconConfigurationLoader.builder()
-                .setPath(dataDirectory.resolve("config.conf"))
+                .setPath(configPath)
                 .build();
 
         final ConfigurationNode node = loader.load();
